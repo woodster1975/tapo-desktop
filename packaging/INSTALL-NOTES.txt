@@ -1,0 +1,17 @@
+Tapo Desk - independent local camera viewer
+
+This installer contains the application, Python runtime, Qt, recording support,
+FFmpeg and ffprobe. You do not need to install Python or FFmpeg separately.
+The app opens without a command-prompt window. Camera and media jobs run hidden.
+
+Installation is for your Windows account. A Start menu entry is created and a
+desktop shortcut is optional. Windows 10 (1809+) or Windows 11, 64-bit, is required.
+Finish any recording and close Tapo Desk before upgrading or uninstalling it.
+
+Your camera passwords stay in Windows Credential Manager. Camera preferences
+and cache stay in your user profile. Recorded clips remain in your chosen
+recording folder. Uninstalling the program leaves this user data in place.
+
+Tapo Desk is unofficial and is not affiliated with TP-Link. Use it on your local
+trusted network. Included third-party software retains its own licenses; see
+the licenses folder. This personal build is not digitally code-signed.

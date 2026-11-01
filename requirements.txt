@@ -1,0 +1,9 @@
+PySide6>=6.10,<6.12
+pytapo==3.4.30
+aiofiles>=23.2.1,<26
+keyring>=25,<26
+# Stream-copy live recording; no additional video decoder/encoder is started.
+av==19.0.2; python_version >= '3.12'
+av==16.1.0; python_version < '3.12'
+# Verified public raw-discovery callback API; also used transitively by PyTapo.
+python-kasa==0.12.0
