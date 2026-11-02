@@ -35,6 +35,8 @@ class WallUITests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory();self.env=patch.dict(os.environ,{'XDG_CONFIG_HOME':self.tmp.name,'LOCALAPPDATA':self.tmp.name});self.env.start()
         from tapo_desktop.app import MainWindow
+        from tapo_desktop.storage import save_cameras
+        save_cameras([Camera('first','First','192.168.1.10'),Camera('second','Second','192.168.1.11')])
         self.w=MainWindow(demo=True)
         self.w.cameras.append(Camera('third','Third','192.168.0.162'))
         self.w.show();self.w.set_mode('wall');self.app.processEvents()

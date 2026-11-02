@@ -2,6 +2,7 @@ Tapo Desk - independent local camera viewer
 
 This installer contains the application, Python runtime, Qt, recording support,
 FFmpeg and ffprobe. You do not need to install Python or FFmpeg separately.
+New installations start with no cameras configured. Existing saved profiles remain.
 The app opens without a command-prompt window. Camera and media jobs run hidden.
 
 Installation is for your Windows account. A Start menu entry is created and a

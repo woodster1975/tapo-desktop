@@ -36,11 +36,20 @@ class StorageTests(unittest.TestCase):
                 with self.assertRaises(UserError):storage.put_secret('cloud','fake-secret')
 
     def test_preferences_have_no_passwords(self):
-        cameras=storage.load_cameras();storage.save_cameras(cameras)
+        cameras=[Camera('first','First','192.168.1.10'),Camera('second','Second','192.168.1.11')]
+        storage.save_cameras(cameras)
         self.assertEqual(storage.load_cameras(),cameras)
         fields=set(json.loads((storage.root_dir()/'cameras.json').read_text())[0])
         self.assertNotIn('password',fields)
         self.assertEqual(len(cameras),2)
+
+    def test_fresh_profile_has_no_cameras(self):
+        self.assertEqual(storage.load_cameras(),[])
+        self.assertFalse((storage.root_dir()/'cameras.json').exists())
+
+    def test_saved_empty_profile_stays_empty(self):
+        storage.save_cameras([])
+        self.assertEqual(storage.load_cameras(),[])
 
     def test_reject_public_hosts_and_path_ids(self):
         for host in ['8.8.8.8','127.0.0.1','169.254.1.2']:
@@ -126,9 +135,23 @@ class UITests(unittest.TestCase):
         self.env=patch.dict(os.environ,{'XDG_CONFIG_HOME':self.tmp.name,'LOCALAPPDATA':self.tmp.name})
         self.env.start()
         from tapo_desktop.app import MainWindow
+        storage.save_cameras([Camera('c310','C310','192.168.1.10','C310'),Camera('c320ws','C320WS','192.168.1.11','C320WS')])
         self.w=MainWindow(demo=True)
     def tearDown(self):
         self.w.close();self.env.stop();self.tmp.cleanup()
+    def test_empty_camera_list_opens_with_setup_controls(self):
+        from tapo_desktop.app import MainWindow
+        with patch('tapo_desktop.app.load_cameras',return_value=[]):
+            window=MainWindow()
+        try:
+            self.assertEqual(window.cameras,[])
+            self.assertIsNone(window.camera)
+            self.assertEqual(window.camera_list.count(),0)
+            self.assertTrue(window.find_btn.isEnabled())
+            self.assertTrue(window.add_btn.isEnabled())
+            self.assertFalse(window.play_btn.isEnabled())
+        finally:window.close()
+
     def test_play_streams_recording_without_download_job(self):
         self.w.demo=False
         with patch.object(self.w.recording_stream,'start') as stream,patch.object(self.w,'start_job') as job:
@@ -280,10 +303,10 @@ class UITests(unittest.TestCase):
         from tapo_desktop.app import rtsp_url,live_error_message
         from PySide6.QtCore import QUrl
         secret='example:p@ss/#?%'
-        url=rtsp_url({'host':'192.168.0.164','stream':'stream1','username':'camera-user','password':secret})
+        url=rtsp_url({'host':'192.168.0.21','stream':'stream1','username':'camera-user','password':secret})
         self.assertEqual(url.scheme(),'rtsp');self.assertEqual(url.port(),554)
         self.assertEqual(url.path(),'/stream1');self.assertEqual(url.password(),secret)
-        self.assertEqual(url.host(),'192.168.0.164')
+        self.assertEqual(url.host(),'192.168.0.21')
         self.assertIn(b'%40',bytes(url.toEncoded()))
         self.assertIn(b'%23',bytes(url.toEncoded()))
         message=live_error_message('401 Unauthorized at rtsp://user:example-secret@host/')
@@ -297,7 +320,7 @@ class UITests(unittest.TestCase):
         self.w.media_path='old.mp4'
         self.w.camera_list.setCurrentRow(1)
         self.assertIsNone(self.w.media_path)
-        self.assertEqual(self.w.camera.host,'192.168.0.164')
+        self.assertEqual(self.w.camera.host,'192.168.1.11')
     def test_got_dates_loads_latest(self):
         self.w.demo=False
         with patch.object(self.w,'start_job') as start:

@@ -12,7 +12,7 @@ from tapo_desktop.storage import Camera
 NET=ipaddress.IPv4Network('192.168.0.0/24')
 ATTACHED=[{'network':str(NET),'address':'192.168.0.123','adapter':'Wi-Fi'}]
 
-def packet(host='192.168.0.163',model='C310(EU)',kind='SMART.IPCAMERA'):
+def packet(host='192.168.0.20',model='C310(EU)',kind='SMART.IPCAMERA'):
     return {'meta':{'ip':host},'discovery_response':{'result':{
         'ip':'10.0.0.99','device_model':model,'device_type':kind,'owner':'private-owner','device_id':'private-id'}}}
 
@@ -27,7 +27,7 @@ async def no_onvif(*args):pass
 class DiscoveryTests(unittest.TestCase):
     def test_whitelist_and_source_address(self):
         row=d.device_from_response(packet(),NET)
-        self.assertEqual(row['host'],'192.168.0.163')
+        self.assertEqual(row['host'],'192.168.0.20')
         self.assertEqual(row['model'],'C310')
         self.assertNotIn('private',str(row))
         self.assertIsNone(d.device_from_response(packet('10.0.0.1'),NET))
@@ -36,10 +36,10 @@ class DiscoveryTests(unittest.TestCase):
 
     def test_onvif_camera_identity_and_malformed_packets(self):
         self.assertEqual(d.onvif_device(onvif(), '192.168.0.162',NET)['model'],'C310')
-        self.assertEqual(d.onvif_device(onvif('C320WS','C320WS'),'192.168.0.164',NET)['model'],'C320WS')
+        self.assertEqual(d.onvif_device(onvif('C320WS','C320WS'),'192.168.0.21',NET)['model'],'C320WS')
         self.assertIsNone(d.onvif_device(onvif('Other','Other camera'),'192.168.0.165',NET))
-        self.assertIsNone(d.onvif_device(b'<!DOCTYPE x><x/>','192.168.0.163',NET))
-        self.assertIsNone(d.onvif_device(b'not xml','192.168.0.163',NET))
+        self.assertIsNone(d.onvif_device(b'<!DOCTYPE x><x/>','192.168.0.20',NET))
+        self.assertIsNone(d.onvif_device(b'not xml','192.168.0.20',NET))
         self.assertIsNone(d.onvif_device(onvif(),'10.0.0.1',NET))
 
     def test_scan_deduplicates_and_never_updates_devices(self):
@@ -54,11 +54,11 @@ class DiscoveryTests(unittest.TestCase):
             self.assertEqual(kwargs['target'],'192.168.0.255')
             self.assertNotIn('credentials',kwargs)
             kwargs['on_discovered_raw'](packet())
-            return {'192.168.0.163':device}
+            return {'192.168.0.20':device}
         async def fake_onvif(network,address,capture):
             self.assertEqual(address,'192.168.0.123')
-            capture(d.onvif_device(onvif(),'192.168.0.163',network))
-            capture(d.onvif_device(onvif('C320WS','C320WS'),'192.168.0.164',network))
+            capture(d.onvif_device(onvif(),'192.168.0.20',network))
+            capture(d.onvif_device(onvif('C320WS','C320WS'),'192.168.0.21',network))
         result=asyncio.run(d.scan(str(NET),discover=fake_discover,onvif_discover=fake_onvif,networks=ATTACHED))
         self.assertEqual(len(result['devices']),2)
         self.assertTrue(device.protocol.closed)
@@ -93,12 +93,14 @@ class DiscoveryUITests(unittest.TestCase):
         self.tmp=tempfile.TemporaryDirectory()
         self.env=patch.dict(os.environ,{'XDG_CONFIG_HOME':self.tmp.name,'LOCALAPPDATA':self.tmp.name});self.env.start()
         from tapo_desktop.app import MainWindow,DiscoveryDialog
+        from tapo_desktop.storage import save_cameras,Camera
+        save_cameras([Camera('first','First','192.168.0.20'),Camera('second','Second','192.168.0.21')])
         self.window=MainWindow(demo=True)
         self.dialog=DiscoveryDialog(self.window.cameras,self.window,networks=ATTACHED)
     def tearDown(self):
         self.dialog.running=False;self.dialog.close();self.window.close();self.env.stop();self.tmp.cleanup()
     def test_known_devices_disabled_and_new_camera_addable(self):
-        rows=[d.onvif_device(onvif(),'192.168.0.162',NET),d.onvif_device(onvif(),'192.168.0.163',NET),
+        rows=[d.onvif_device(onvif(),'192.168.0.162',NET),d.onvif_device(onvif(),'192.168.0.20',NET),
               d.device_from_response(packet('192.168.0.170','P110','SMART.TAPOPLUG'),NET)]
         self.dialog.got_results({'network':str(NET),'devices':rows})
         self.assertEqual(self.dialog.table.item(1,3).text(),'Already added')

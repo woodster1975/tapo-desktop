@@ -66,8 +66,7 @@ def thumbnail_path(camera,date,start,end):
 def load_cameras():
     path = root_dir()/'cameras.json'
     if not path.exists():
-        return [Camera('c310', 'C310', '192.168.0.163', 'C310'),
-                Camera('c320ws', 'C320WS', '192.168.0.164', 'C320WS')]
+        return []
     try:
         return [Camera.from_dict(c) for c in json.loads(path.read_text())]
     except Exception:

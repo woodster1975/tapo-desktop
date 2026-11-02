@@ -159,7 +159,7 @@ class CameraDialog(QDialog):
                 'use_shared_credentials':self.original.use_shared_credentials if self.original else True})
             self.accept()
         except Exception:
-            self.error.setText('Enter a camera name and a private LAN IPv4 address, such as 192.168.0.163.')
+            self.error.setText('Enter a camera name and a private LAN IPv4 address, such as 192.168.1.100.')
 
 
 class CredentialsDialog(QDialog):
@@ -364,6 +364,9 @@ class MainWindow(QMainWindow):
         self.populate_cameras()
         if self.cameras:
             self.camera_list.setCurrentRow(0)
+        else:
+            self.status.setText("Add a camera or use Find cameras to get started.")
+            self.update_controls()
 
     def build_ui(self):
         central=QWidget();self.setCentralWidget(central)

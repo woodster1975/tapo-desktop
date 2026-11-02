@@ -1,8 +1,5 @@
-Tapo Desk 0.7.2
-Console-free Windows startup using a native GUI executable and separate hidden worker.
-Background FFmpeg processes run without opening command prompt windows.
-Installer: dist/installers/TapoDesk-0.7.2-Setup-x64.exe (about 132 MB, unsigned).
-Install/start/uninstall validation passed; camera settings and saved passwords preserved.
-114 offline tests pass. Packaged camera dates, live recording and decode checks passed.
-Windows Credential Manager keeps credentials persistent between application uses.
-Install over the existing version after closing Tapo Desk.
+Tapo Desk 0.7.3
+New installations start with an empty camera list.
+Removed built-in C310/C320WS profiles and camera-specific address example.
+Existing saved camera profiles and credentials remain unchanged.
+Console-free Windows startup and hidden camera/media workers retained.

@@ -4,7 +4,7 @@ A native Python/Qt app for viewing and recording Tapo cameras on Windows and Lin
 
 ## Download for Windows
 
-Download **TapoDesk-0.7.2-Setup-x64.exe** from the [latest release](https://github.com/woodster1975/tapo-desktop/releases/latest). The installer includes Python and the media tools, installs for your Windows account, and adds a Start menu entry and optional desktop shortcut.
+Download **TapoDesk-0.7.3-Setup-x64.exe** from the [latest release](https://github.com/woodster1975/tapo-desktop/releases/latest). The installer includes Python and the media tools, installs for your Windows account, and adds a Start menu entry and optional desktop shortcut.
 
 Close Tapo Desk before upgrading. Your camera settings and saved credentials are retained. The current installer is unsigned; its SHA-256 checksum is published beside the download. Requires 64-bit Windows 10 version 1809 or later.
 
@@ -22,7 +22,7 @@ Tapo Desk is an unofficial client, not affiliated with TP-Link. Camera and firmw
 
 ## First use
 
-Connect the computer and cameras to the same local network. Use **Find cameras** or **Add camera** to configure your devices. Replace any example profiles with your own camera addresses.
+Connect the computer and cameras to the same local network. Use **Find cameras** or **Add camera** to configure your devices. New installations start with an empty camera list. Existing saved camera profiles are retained on upgrade.
 
 Open **Credentials** to save the Tapo account password used for recordings. Live view also requires the separately configured Camera Account username and password from the Tapo app. A shared Camera Account can be used across cameras, with per-camera overrides available.
 
@@ -72,7 +72,7 @@ The build downloads and verifies pinned FFmpeg tools and generates the installer
 
 ## Validation and limitations
 
-Version 0.7.2 passed 114 offline tests. Packaged Windows checks covered GUI-to-worker communication, hidden console state, camera recording dates, a short live recording and video decoding. Isolated install/start/uninstall preserved camera settings and saved credentials. Historical Linux checks covered the camera wall and recording playback.
+Version 0.7.3 passed 117 offline tests. Packaged Windows checks covered GUI-to-worker communication, hidden console state, camera recording dates, a short live recording and video decoding. Isolated install/start/uninstall preserved camera settings and saved credentials. Historical Linux checks covered the camera wall and recording playback.
 
 Run offline tests inside the configured environment:
 
